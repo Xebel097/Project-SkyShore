@@ -9,7 +9,15 @@
 <body>
   <div id="home">
     <h1>Snake Game</h1>
+    <label>Select Mode:
+      <select id="modeSelect">
+        <option value="150">Easy</option>
+        <option value="100">Medium</option>
+        <option value="60">Hard</option>
+      </select>
+    </label>
     <button onclick="startGame()">Start Game</button>
+    <div id="leaderboard"></div>
   </div>
 
   <canvas id="gameCanvas" width="400" height="400" style="display: none;"></canvas>
@@ -32,34 +40,31 @@
     const rows = canvas.height / box;
     const cols = canvas.width / box;
 
-    let snake = [];
-    let food = {};
-    let direction = "RIGHT";
-    let score = 0;
-    let interval;
-    let allowChange = true;
+    let snake = [], food = {}, direction = "RIGHT", score = 0;
+    let interval, speed = 150, allowChange = true;
 
     const eatSound = document.getElementById("eatSound");
     const gameOverSound = document.getElementById("gameOverSound");
-
     const appleImg = new Image();
     appleImg.src = "https://i.imgur.com/1bX5QH6.png";
 
     function startGame() {
       document.getElementById("home").style.display = "none";
+      document.getElementById("gameOver").style.display = "none";
       canvas.style.display = "block";
       document.getElementById("score").style.display = "block";
-
+      
+      speed = parseInt(document.getElementById("modeSelect").value);
       snake = [{ x: 9 * box, y: 9 * box }];
       direction = "RIGHT";
       score = 0;
       generateFood();
       draw();
-      interval = setInterval(move, 150);
+      clearInterval(interval);
+      interval = setInterval(move, speed);
     }
 
     function restartGame() {
-      document.getElementById("gameOver").style.display = "none";
       startGame();
     }
 
@@ -72,22 +77,21 @@
 
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let i = 0; i < snake.length; i++) {
-        ctx.fillStyle = "#0000ff";
-        ctx.fillRect(snake[i].x, snake[i].y, box, box);
+      snake.forEach((part, i) => {
+        ctx.fillStyle = i === 0 ? "#0000ff" : "#0077cc";
+        ctx.fillRect(part.x, part.y, box, box);
         if (i === 0) {
           ctx.fillStyle = "#fff";
-          ctx.beginPath(); ctx.arc(snake[i].x + 5, snake[i].y + 5, 3, 0, Math.PI * 2); ctx.fill();
-          ctx.beginPath(); ctx.arc(snake[i].x + 15, snake[i].y + 5, 3, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(part.x + 5, part.y + 5, 3, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(part.x + 15, part.y + 5, 3, 0, Math.PI * 2); ctx.fill();
         }
-      }
+      });
       ctx.drawImage(appleImg, food.x, food.y, box, box);
       document.getElementById("score").textContent = `Score: ${score}`;
     }
 
     function move() {
       let head = { ...snake[0] };
-
       switch (direction) {
         case "LEFT": head.x -= box; break;
         case "UP": head.y -= box; break;
@@ -107,11 +111,12 @@
         document.getElementById("score").style.display = "none";
         document.getElementById("finalScore").textContent = `Your score: ${score}`;
         document.getElementById("gameOver").style.display = "block";
+        saveHighScore(score);
+        updateLeaderboard();
         return;
       }
 
       snake.unshift(head);
-
       if (head.x === food.x && head.y === food.y) {
         score++;
         eatSound.play();
@@ -119,7 +124,6 @@
       } else {
         snake.pop();
       }
-
       allowChange = true;
       draw();
     }
@@ -140,35 +144,35 @@
       if (e.key === "ArrowDown") setDirection("DOWN");
     });
 
-    // Swipe detection
-    let touchStartX = 0;
-    let touchStartY = 0;
-
+    let startX = 0, startY = 0;
     canvas.addEventListener("touchstart", e => {
-      const touch = e.touches[0];
-      touchStartX = touch.clientX;
-      touchStartY = touch.clientY;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
     });
-
-    canvas.addEventListener("touchmove", e => {
-      if (e.cancelable) e.preventDefault();
-    }, { passive: false });
-
     canvas.addEventListener("touchend", e => {
-      const touch = e.changedTouches[0];
-      const dx = touch.clientX - touchStartX;
-      const dy = touch.clientY - touchStartY;
-
+      const dx = e.changedTouches[0].clientX - startX;
+      const dy = e.changedTouches[0].clientY - startY;
       if (Math.abs(dx) > Math.abs(dy)) {
-        if (dx > 20) setDirection("RIGHT");
-        else if (dx < -20) setDirection("LEFT");
+        dx > 20 ? setDirection("RIGHT") : setDirection("LEFT");
       } else {
-        if (dy > 20) setDirection("DOWN");
-        else if (dy < -20) setDirection("UP");
+        dy > 20 ? setDirection("DOWN") : setDirection("UP");
       }
     });
 
-    document.getElementById("home").style.display = "block";
+    function saveHighScore(score) {
+      let scores = JSON.parse(localStorage.getItem("snakeScores")) || [];
+      scores.push(score);
+      scores = scores.sort((a, b) => b - a).slice(0, 5);
+      localStorage.setItem("snakeScores", JSON.stringify(scores));
+    }
+
+    function updateLeaderboard() {
+      const scores = JSON.parse(localStorage.getItem("snakeScores")) || [];
+      const board = document.getElementById("leaderboard");
+      board.innerHTML = '<h3>Top Scores</h3><ol>' + scores.map(s => `<li>${s}</li>`).join('') + '</ol>';
+    }
+
+    updateLeaderboard();
   </script>
 </body>
 </html>

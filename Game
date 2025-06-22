@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Snake Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #2c3e50;
+            font-family: 'Press Start 2P', cursive; /* A pixel-art font, consider linking it from Google Fonts if you want */
+            color: #ecf0f1;
+            flex-direction: column;
+        }
+
+        #game-area {
+            background-color: #34495e;
+            border: 5px solid #2980b9;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            display: grid;
+            position: relative;
+        }
+
+        .snake-segment {
+            background-color: #27ae60;
+            border: 1px solid #2ecc71;
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        }
+
+        .food {
+            background-color: #e74c3c;
+            border: 1px solid #c0392b;
+            box-sizing: border-box;
+            border-radius: 50%;
+        }
+
+        #score-board {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            text-align: center;
+        }
+
+        #game-over-screen {
+            display: none;
+            position: absolute

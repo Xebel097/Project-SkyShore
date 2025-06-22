@@ -4,11 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Snake Game</title>
-  <link rel="stylesheet" href="style.css">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
     body {
       margin: 0;
-      padding: 0;
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #1e1e2f, #23234a);
       color: white;
@@ -35,9 +34,10 @@
     canvas {
       border: 5px solid #00e676;
       border-radius: 10px;
-      background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThGIpJgEgQ7YS2gVeFwcSEGinC0RAP-5bw2Q&s');
+      background: url('https://i.imgur.com/fz7fQWY.png');
       background-size: cover;
       box-shadow: 0 0 20px #00e676;
+      touch-action: none;
     }
 
     button, select {
@@ -111,14 +111,14 @@
     const eatSound = document.getElementById("eatSound");
     const gameOverSound = document.getElementById("gameOverSound");
     const appleImg = new Image();
-    appleImg.src = "https://ibb.co/KjW1b9rM";
+    appleImg.src = "https://i.imgur.com/1bX5QH6.png"; // Direct image link
 
     function startGame() {
       document.getElementById("home").style.display = "none";
       document.getElementById("gameOver").style.display = "none";
       canvas.style.display = "block";
       document.getElementById("score").style.display = "block";
-      
+
       speed = parseInt(document.getElementById("modeSelect").value);
       snake = [{ x: 9 * box, y: 9 * box }];
       direction = "RIGHT";
@@ -164,6 +164,7 @@
         case "DOWN": head.y += box; break;
       }
 
+      // Wrap around
       if (head.x < 0) head.x = canvas.width - box;
       if (head.x >= canvas.width) head.x = 0;
       if (head.y < 0) head.y = canvas.height - box;

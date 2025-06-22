@@ -1,2 +1,2 @@
-# Project-Sky-hore
+# Project-SkyShore
 For fun

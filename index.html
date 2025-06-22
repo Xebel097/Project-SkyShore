@@ -5,18 +5,83 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Snake Game</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1e1e2f, #23234a);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      font-size: 3em;
+      margin-bottom: 0.2em;
+    }
+
+    #home, #gameOver {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    canvas {
+      border: 5px solid #00e676;
+      border-radius: 10px;
+      background: url('https://i.imgur.com/fz7fQWY.png');
+      background-size: cover;
+      box-shadow: 0 0 20px #00e676;
+    }
+
+    button, select {
+      font-size: 1em;
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 8px;
+      background-color: #00e676;
+      color: #000;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover, select:hover {
+      background-color: #00c853;
+    }
+
+    #score {
+      font-size: 1.2em;
+      margin: 15px;
+    }
+
+    #leaderboard {
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    #leaderboard ol {
+      padding-left: 1.2em;
+    }
+  </style>
 </head>
 <body>
   <div id="home">
-    <h1>Snake Game</h1>
+    <h1>🐍 Snake Game</h1>
     <label>Select Mode:
       <select id="modeSelect">
         <option value="150">Easy</option>
         <option value="100">Medium</option>
         <option value="60">Hard</option>
       </select>
-    </label>
-    <button onclick="startGame()">Start Game</button>
+    </label><br>
+    <button onclick="startGame()">🚀 Start Game</button>
     <div id="leaderboard"></div>
   </div>
 
@@ -24,9 +89,9 @@
   <div id="score"></div>
 
   <div id="gameOver" style="display: none;">
-    <h2>Game Over!</h2>
+    <h2>💀 Game Over!</h2>
     <p id="finalScore"></p>
-    <button onclick="restartGame()">Play Again</button>
+    <button onclick="restartGame()">🔁 Play Again</button>
   </div>
 
   <!-- Sounds -->
@@ -78,16 +143,16 @@
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       snake.forEach((part, i) => {
-        ctx.fillStyle = i === 0 ? "#0000ff" : "#0077cc";
+        ctx.fillStyle = i === 0 ? "#fdd835" : "#ffeb3b";
         ctx.fillRect(part.x, part.y, box, box);
         if (i === 0) {
-          ctx.fillStyle = "#fff";
+          ctx.fillStyle = "#000";
           ctx.beginPath(); ctx.arc(part.x + 5, part.y + 5, 3, 0, Math.PI * 2); ctx.fill();
           ctx.beginPath(); ctx.arc(part.x + 15, part.y + 5, 3, 0, Math.PI * 2); ctx.fill();
         }
       });
       ctx.drawImage(appleImg, food.x, food.y, box, box);
-      document.getElementById("score").textContent = `Score: ${score}`;
+      document.getElementById("score").textContent = `🎯 Score: ${score}`;
     }
 
     function move() {
@@ -109,7 +174,7 @@
         gameOverSound.play();
         canvas.style.display = "none";
         document.getElementById("score").style.display = "none";
-        document.getElementById("finalScore").textContent = `Your score: ${score}`;
+        document.getElementById("finalScore").textContent = `🏆 Your score: ${score}`;
         document.getElementById("gameOver").style.display = "block";
         saveHighScore(score);
         updateLeaderboard();
@@ -169,7 +234,7 @@
     function updateLeaderboard() {
       const scores = JSON.parse(localStorage.getItem("snakeScores")) || [];
       const board = document.getElementById("leaderboard");
-      board.innerHTML = '<h3>Top Scores</h3><ol>' + scores.map(s => `<li>${s}</li>`).join('') + '</ol>';
+      board.innerHTML = '<h3>🏅 Top Scores</h3><ol>' + scores.map(s => `<li>${s}</li>`).join('') + '</ol>';
     }
 
     updateLeaderboard();
